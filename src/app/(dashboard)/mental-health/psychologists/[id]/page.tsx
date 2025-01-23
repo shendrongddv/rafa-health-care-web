@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { notFound } from 'next/navigation';
+import { format } from 'date-fns';
 import { psychologists } from '@/data/psychologists';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -8,30 +10,156 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { 
   Award, 
-  BookOpen, 
   Clock, 
   Globe, 
   GraduationCap, 
-  Languages, 
   MessageSquare, 
-  Scroll, 
+  CheckCircle2,
+  BookMarked,
+  FileText,
+  Users,
+  Brain,
+  Stethoscope,
 } from 'lucide-react';
-import { format } from 'date-fns';
-import { useState } from 'react';
 
 interface PageProps {
   params: {
     id: string;
-  };
+  }
 }
 
-export default function PsychologistDetailPage({ params }: PageProps) {
-  const psychologist = psychologists.find((p) => p.id === params.id);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+const mockProfessionalData = {
+  specializations: [
+    {
+      area: "Anxiety Disorders",
+      description: "Specialized treatment for various anxiety disorders including GAD, panic disorder, and social anxiety.",
+      experience: "8+ years",
+      approaches: ["CBT", "Exposure Therapy", "Mindfulness-Based Therapy"]
+    },
+    {
+      area: "Depression Management",
+      description: "Evidence-based treatment for major depressive disorder and persistent depressive disorder.",
+      experience: "10+ years",
+      approaches: ["Interpersonal Therapy", "Behavioral Activation", "CBT"]
+    },
+    {
+      area: "Trauma Recovery",
+      description: "Trauma-informed care for PTSD and complex trauma.",
+      experience: "6+ years",
+      approaches: ["EMDR", "Trauma-Focused CBT", "Somatic Experiencing"]
+    }
+  ],
+  approaches: [
+    {
+      name: "Cognitive Behavioral Therapy (CBT)",
+      description: "A structured approach focusing on identifying and changing negative thought patterns and behaviors.",
+      suitable_for: ["Anxiety", "Depression", "Stress Management", "Phobias"],
+      certification_year: 2015
+    },
+    {
+      name: "Mindfulness-Based Cognitive Therapy (MBCT)",
+      description: "Combines traditional CBT methods with mindfulness strategies to help prevent depression relapse.",
+      suitable_for: ["Depression", "Anxiety", "Stress"],
+      certification_year: 2017
+    },
+    {
+      name: "Eye Movement Desensitization and Reprocessing (EMDR)",
+      description: "A psychotherapy treatment designed to alleviate the distress associated with traumatic memories.",
+      suitable_for: ["PTSD", "Trauma", "Anxiety"],
+      certification_year: 2019
+    },
+    {
+      name: "Dialectical Behavior Therapy (DBT)",
+      description: "A comprehensive cognitive-behavioral treatment for complex mental disorders.",
+      suitable_for: ["Borderline Personality Disorder", "Self-harm", "Emotional Regulation"],
+      certification_year: 2018
+    }
+  ],
+  education: [
+    {
+      degree: "Ph.D. in Clinical Psychology",
+      institution: "Stanford University",
+      year: "2015",
+      thesis: "The Role of Mindfulness in Anxiety Treatment: A Longitudinal Study",
+      honors: ["Summa Cum Laude", "Outstanding Research Award"]
+    },
+    {
+      degree: "M.S. in Psychology",
+      institution: "University of California, Berkeley",
+      year: "2012",
+      specialization: "Cognitive and Behavioral Psychology",
+      honors: ["Dean's List"]
+    },
+    {
+      degree: "B.A. in Psychology",
+      institution: "Yale University",
+      year: "2010",
+      minor: "Neuroscience",
+      honors: ["Phi Beta Kappa"]
+    }
+  ],
+  certifications: [
+    {
+      name: "Licensed Clinical Psychologist",
+      organization: "American Board of Professional Psychology",
+      year: "2016",
+      expires: "2026",
+      license_number: "PSY12345"
+    },
+    {
+      name: "Certified EMDR Therapist",
+      organization: "EMDR International Association",
+      year: "2019",
+      expires: "2025",
+      certification_number: "EMDR98765"
+    },
+    {
+      name: "Certified DBT Therapist",
+      organization: "DBT-Linehan Board of Certification",
+      year: "2018",
+      expires: "2024",
+      certification_number: "DBT45678"
+    }
+  ],
+  publications: [
+    {
+      title: "The Impact of Mindfulness-Based Interventions on Anxiety Disorders: A Meta-Analysis",
+      journal: "Journal of Clinical Psychology",
+      year: 2020,
+      doi: "10.1000/jcp.2020.12345",
+      citation_count: 156
+    },
+    {
+      title: "Integrating Technology in CBT: A Systematic Review",
+      journal: "Cognitive Therapy and Research",
+      year: 2019,
+      doi: "10.1000/ctr.2019.67890",
+      citation_count: 89
+    },
+    {
+      title: "Long-term Outcomes of EMDR in PTSD Treatment",
+      journal: "Journal of Traumatic Stress",
+      year: 2018,
+      doi: "10.1000/jts.2018.13579",
+      citation_count: 234
+    }
+  ],
+  research_interests: [
+    "Digital Mental Health Interventions",
+    "Trauma-Informed Care",
+    "Mindfulness-Based Therapies",
+    "Anxiety Disorders",
+    "Depression Treatment Outcomes"
+  ]
+};
 
+export default function PsychologistDetailPage({ params }: PageProps) {
+  const psychologist = psychologists.find(p => p.id === params.id);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  
   if (!psychologist) {
     notFound();
   }
@@ -41,184 +169,216 @@ export default function PsychologistDetailPage({ params }: PageProps) {
     : [];
 
   return (
-    <div className="container px-4 py-16">
+    <div className="container py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Header */}
-          <div className="flex items-start gap-6">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={psychologist.avatar} alt={psychologist.name} />
-              <AvatarFallback>
-                {psychologist.name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold">{psychologist.name}</h1>
-              <p className="text-xl text-muted-foreground">{psychologist.title}</p>
-              <div className="flex flex-wrap gap-2">
-                {psychologist.expertise.map((expertise) => (
-                  <Badge key={expertise} variant="secondary">
-                    {expertise}
-                  </Badge>
-                ))}
+          {/* Profile Header */}
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row items-start gap-6">
+              <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
+                <AvatarImage src={psychologist.avatar} alt={psychologist.name} />
+                <AvatarFallback>{psychologist.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0 space-y-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold truncate">{psychologist.name}</h1>
+                  <p className="text-lg sm:text-xl text-muted-foreground">{psychologist.title}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {psychologist.expertise.map((skill) => (
+                    <Badge key={skill} variant="secondary">{skill}</Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-muted-foreground text-sm sm:text-base">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{psychologist.education}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{psychologist.yearsOfExperience} Years Experience</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{psychologist.languages.join(', ')}</span>
               </div>
             </div>
           </div>
 
-          {/* Tabs Content */}
-          <Tabs defaultValue="about" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="about">About</TabsTrigger>
-              <TabsTrigger value="expertise">Expertise</TabsTrigger>
-              <TabsTrigger value="credentials">Credentials</TabsTrigger>
-              <TabsTrigger value="publications">Publications</TabsTrigger>
-            </TabsList>
+          {/* Detailed Information Tabs */}
+          <Tabs defaultValue="overview" className="space-y-4">
+            <ScrollArea className="w-full whitespace-nowrap rounded-md">
+              <div className="flex w-max p-1">
+                <TabsList>
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="specializations">Specializations</TabsTrigger>
+                  <TabsTrigger value="approaches">Therapeutic Approaches</TabsTrigger>
+                  <TabsTrigger value="education">Education</TabsTrigger>
+                  <TabsTrigger value="certifications">Certifications</TabsTrigger>
+                  <TabsTrigger value="publications">Publications</TabsTrigger>
+                </TabsList>
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
 
-            <TabsContent value="about" className="space-y-4">
+            <TabsContent value="overview" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>About Me</CardTitle>
+                  <CardTitle>About</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground">{psychologist.detailedBio || psychologist.shortBio}</p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>{psychologist.yearsOfExperience} years of experience</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Languages className="h-4 w-4" />
-                      <span>{psychologist.languages.join(', ')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      <span>{psychologist.consultationFee.duration} minutes session</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
-                      <span>Online consultation available</span>
-                    </div>
-                  </div>
+                <CardContent>
+                  <p className="text-muted-foreground">{psychologist.shortBio}</p>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="expertise" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Specializations</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="list-disc list-inside space-y-2">
-                    {psychologist.specializations.map((spec, index) => (
-                      <li key={index} className="text-muted-foreground">{spec}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Therapeutic Approaches</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="list-disc list-inside space-y-2">
-                    {psychologist.approaches.map((approach, index) => (
-                      <li key={index} className="text-muted-foreground">{approach}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="credentials" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5" />
-                    Education
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{psychologist.education}</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Scroll className="h-5 w-5" />
-                    Certifications
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    {psychologist.certifications.map((cert, index) => (
-                      <li key={index} className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{cert.name}</p>
-                          <p className="text-sm text-muted-foreground">{cert.issuer}</p>
-                        </div>
-                        <Badge variant="outline">{cert.year}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              {psychologist.awards && psychologist.awards.length > 0 && (
-                <Card>
+            <TabsContent value="specializations" className="space-y-4">
+              {mockProfessionalData.specializations.map((spec, index) => (
+                <Card key={index}>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Award className="h-5 w-5" />
-                      Awards & Recognition
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Brain className="w-5 h-5 text-primary" />
+                      <CardTitle>{spec.area}</CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-4">
-                      {psychologist.awards.map((award, index) => (
-                        <li key={index} className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{award.name}</p>
-                            <p className="text-sm text-muted-foreground">{award.issuer}</p>
-                          </div>
-                          <Badge variant="outline">{award.year}</Badge>
-                        </li>
+                  <CardContent className="space-y-4">
+                    <p className="text-muted-foreground">{spec.description}</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="w-4 h-4" />
+                      <span>{spec.experience}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {spec.approaches.map((approach, idx) => (
+                        <Badge key={idx} variant="outline">{approach}</Badge>
                       ))}
-                    </ul>
+                    </div>
                   </CardContent>
                 </Card>
-              )}
+              ))}
+            </TabsContent>
+
+            <TabsContent value="approaches" className="space-y-4">
+              {mockProfessionalData.approaches.map((approach, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Stethoscope className="w-5 h-5 text-primary" />
+                      <CardTitle>{approach.name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-muted-foreground">{approach.description}</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span className="font-medium">Suitable for:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {approach.suitable_for.map((condition, idx) => (
+                          <Badge key={idx} variant="secondary">{condition}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Certified since {approach.certification_year}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="education" className="space-y-4">
+              {mockProfessionalData.education.map((edu, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="w-5 h-5 text-primary" />
+                      <CardTitle>{edu.degree}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-medium">{edu.institution}</p>
+                        <p className="text-muted-foreground">Class of {edu.year}</p>
+                      </div>
+                      {edu.thesis && (
+                        <div>
+                          <p className="font-medium">Thesis</p>
+                          <p className="text-muted-foreground">{edu.thesis}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {edu.honors.map((honor, idx) => (
+                        <Badge key={idx} variant="outline">{honor}</Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="certifications" className="space-y-4">
+              {mockProfessionalData.certifications.map((cert, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Award className="w-5 h-5 text-primary" />
+                      <CardTitle>{cert.name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-medium">{cert.organization}</p>
+                        <p className="text-muted-foreground">License #{cert.license_number || cert.certification_number}</p>
+                      </div>
+                      <div>
+                        <p className="font-medium">Valid Period</p>
+                        <p className="text-muted-foreground">{cert.year} - {cert.expires}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </TabsContent>
 
             <TabsContent value="publications" className="space-y-4">
-              {psychologist.publications && psychologist.publications.length > 0 ? (
-                <Card>
+              {mockProfessionalData.publications.map((pub, index) => (
+                <Card key={index}>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5" />
-                      Publications & Research
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <BookMarked className="w-5 h-5 text-primary" />
+                      <CardTitle>{pub.title}</CardTitle>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-4">
-                      {psychologist.publications.map((pub, index) => (
-                        <li key={index} className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{pub.title}</p>
-                            <p className="text-sm text-muted-foreground">{pub.publisher}</p>
-                          </div>
-                          <Badge variant="outline">{pub.year}</Badge>
-                        </li>
-                      ))}
-                    </ul>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-medium">{pub.journal}</p>
+                        <p className="text-muted-foreground">Published in {pub.year}</p>
+                      </div>
+                      <div>
+                        <p className="font-medium">Impact</p>
+                        <p className="text-muted-foreground">{pub.citation_count} citations</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <FileText className="w-4 h-4" />
+                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" 
+                         className="text-primary hover:underline">
+                        DOI: {pub.doi}
+                      </a>
+                    </div>
                   </CardContent>
                 </Card>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">No publications available</p>
-              )}
+              ))}
             </TabsContent>
           </Tabs>
         </div>
@@ -271,7 +431,20 @@ export default function PsychologistDetailPage({ params }: PageProps) {
               </div>
 
               <Button className="w-full">
-                Continue to Book
+                Schedule Consultation
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Quick Contact */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Contact</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button variant="outline" className="w-full">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Send Message
               </Button>
             </CardContent>
           </Card>
