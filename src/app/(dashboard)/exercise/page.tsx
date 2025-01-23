@@ -59,7 +59,7 @@ const ExercisePage = () => {
   const [selectedType, setSelectedType] = useState<ExerciseType>('running');
 
   return (
-    <section className="container space-y-8 py-8">
+    <section className="container space-y-8 py-8 px-4">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold">Exercise Tracking</h1>
         <p className="text-muted-foreground">

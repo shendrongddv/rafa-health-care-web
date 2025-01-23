@@ -109,7 +109,7 @@ export default function ActivityDetailPage() {
   };
 
   return (
-    <section className="container space-y-8 py-8">
+    <section className="container space-y-8 py-8 px-4">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
