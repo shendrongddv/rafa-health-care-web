@@ -1,6 +1,6 @@
 "use client";
 
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "./theme-provider";
 import QueryProvider from "./query-provider";
 
@@ -13,9 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <NuqsAdapter>          
-        {children}
-        </NuqsAdapter>
+        <NuqsAdapter>{children}</NuqsAdapter>
       </ThemeProvider>
     </QueryProvider>
   );

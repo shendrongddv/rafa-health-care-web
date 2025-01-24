@@ -8,15 +8,21 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id            String          @id @default(uuid())
   name          String?
   email         String          @unique
   emailVerified DateTime?
   image         String?
+  role          Role            @default(USER)
   accounts      Account[]
   sessions      Session[]
-  // Optional for WebAuthn support
+  profile       Profile?        
   Authenticator Authenticator[]
 
   createdAt DateTime @default(now())
@@ -76,4 +82,52 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model Profile {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Personal Information
+  bio         String?   @db.Text
+  phone       String?
+  gender      String?
+  birthDate   DateTime?
+  occupation  String?
+  
+  // Address Information
+  address     String?   @db.Text
+  provinceId  String?
+  province    String?
+  regencyId   String?
+  regency     String?
+  districtId  String?
+  district    String?
+  villageId   String?
+  village     String?
+  postalCode  String?
+
+  // Social Media
+  website     String?
+  twitter     String?
+  facebook    String?
+  instagram   String?
+  linkedin    String?
+
+  // Health Information
+  height      Float?    // in cm
+  weight      Float?    // in kg
+  bloodType   String?
+  allergies   String?   @db.Text
+  
+  // Emergency Contact
+  emergencyContactName    String?
+  emergencyContactPhone   String?
+  emergencyContactRelation String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

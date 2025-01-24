@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const convertToInitials = (name: string): string => {
@@ -11,4 +11,3 @@ export const convertToInitials = (name: string): string => {
     .map((part) => part[0].toUpperCase()) // Take the first letter of each part and capitalize it
     .join(""); // Join the letters
 };
-

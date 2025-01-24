@@ -1,23 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import Link from "next/link";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
-type ExerciseType = 'running' | 'cycling' | 'sleep';
+type ExerciseType = "running" | "cycling" | "sleep";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Exercise {
@@ -28,38 +34,40 @@ interface Exercise {
 }
 
 const exerciseIcons = {
-  running: '🏃‍♂️',
-  cycling: '🚴‍♂️',
-  sleep: '😴',
+  running: "🏃‍♂️",
+  cycling: "🚴‍♂️",
+  sleep: "😴",
 };
 
 const exerciseMetrics = {
   running: {
-    weeklyDistance: '41.5 km',
-    weeklyTime: '4h 14m',
-    lastActivity: '5.9 km',
-    trend: '+8.5%',
+    weeklyDistance: "41.5 km",
+    weeklyTime: "4h 14m",
+    lastActivity: "5.9 km",
+    trend: "+8.5%",
   },
   cycling: {
-    weeklyDistance: '126.9 km',
-    weeklyTime: '6h 39m',
-    lastActivity: '17.9 km',
-    trend: '+15.2%',
+    weeklyDistance: "126.9 km",
+    weeklyTime: "6h 39m",
+    lastActivity: "17.9 km",
+    trend: "+15.2%",
   },
   sleep: {
-    weeklyTime: '53h 12m',
-    avgDuration: '7.6h',
-    quality: '84%',
-    trend: '+3.2%',
+    weeklyTime: "53h 12m",
+    avgDuration: "7.6h",
+    quality: "84%",
+    trend: "+3.2%",
   },
 };
 
 const ExercisePage = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedType, setSelectedType] = useState<ExerciseType>('running');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
+  const [selectedType, setSelectedType] = useState<ExerciseType>("running");
 
   return (
-    <section className="container space-y-8 py-8 px-4">
+    <section className="container space-y-8 px-4 py-8">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold">Exercise Tracking</h1>
         <p className="text-muted-foreground">
@@ -69,12 +77,14 @@ const ExercisePage = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Activity Cards */}
-        {(['running', 'cycling', 'sleep'] as ExerciseType[]).map((type) => (
+        {(["running", "cycling", "sleep"] as ExerciseType[]).map((type) => (
           <Link href={`/exercise/${type}`} key={type}>
-            <Card className={cn(
-              "transition-all hover:shadow-lg cursor-pointer group",
-              selectedType === type && "border-primary"
-            )}>
+            <Card
+              className={cn(
+                "group cursor-pointer transition-all hover:shadow-lg",
+                selectedType === type && "border-primary",
+              )}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xl font-medium capitalize">
                   {type}
@@ -82,28 +92,40 @@ const ExercisePage = () => {
                 <span className="text-2xl">{exerciseIcons[type]}</span>
               </CardHeader>
               <CardContent>
-                {type === 'sleep' ? (
+                {type === "sleep" ? (
                   <>
-                    <div className="text-2xl font-bold">{exerciseMetrics[type].avgDuration}</div>
-                    <p className="text-xs text-muted-foreground">Average duration per day</p>
+                    <div className="text-2xl font-bold">
+                      {exerciseMetrics[type].avgDuration}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Average duration per day
+                    </p>
                     <div className="mt-2 text-sm">
                       Quality: {exerciseMetrics[type].quality}
-                      <span className="text-green-500 ml-2">{exerciseMetrics[type].trend}</span>
+                      <span className="ml-2 text-green-500">
+                        {exerciseMetrics[type].trend}
+                      </span>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="text-2xl font-bold">{exerciseMetrics[type].weeklyDistance}</div>
-                    <p className="text-xs text-muted-foreground">Total distance this week</p>
+                    <div className="text-2xl font-bold">
+                      {exerciseMetrics[type].weeklyDistance}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Total distance this week
+                    </p>
                     <div className="mt-2 text-sm">
                       Time: {exerciseMetrics[type].weeklyTime}
-                      <span className="text-green-500 ml-2">{exerciseMetrics[type].trend}</span>
+                      <span className="ml-2 text-green-500">
+                        {exerciseMetrics[type].trend}
+                      </span>
                     </div>
                   </>
                 )}
                 <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground group-hover:text-primary">
                   <span>View Details</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardContent>
             </Card>
@@ -142,7 +164,9 @@ const ExercisePage = () => {
                 <Label htmlFor="type">Activity Type</Label>
                 <Select
                   value={selectedType}
-                  onValueChange={(value) => setSelectedType(value as ExerciseType)}
+                  onValueChange={(value) =>
+                    setSelectedType(value as ExerciseType)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select activity type" />
@@ -155,7 +179,7 @@ const ExercisePage = () => {
                 </Select>
               </div>
 
-              {selectedType !== 'sleep' && (
+              {selectedType !== "sleep" && (
                 <div className="space-y-2">
                   <Label htmlFor="distance">Distance (km)</Label>
                   <Input
@@ -169,13 +193,15 @@ const ExercisePage = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="duration">
-                  {selectedType === 'sleep' ? 'Sleep Duration (hours)' : 'Duration (minutes)'}
+                  {selectedType === "sleep"
+                    ? "Sleep Duration (hours)"
+                    : "Duration (minutes)"}
                 </Label>
                 <Input
                   id="duration"
                   type="number"
                   placeholder="Enter duration"
-                  step={selectedType === 'sleep' ? '0.5' : '1'}
+                  step={selectedType === "sleep" ? "0.5" : "1"}
                 />
               </div>
 

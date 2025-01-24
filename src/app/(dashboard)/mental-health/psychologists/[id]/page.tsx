@@ -1,105 +1,116 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { notFound } from 'next/navigation';
-import { format } from 'date-fns';
-import { psychologists } from '@/data/psychologists';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar } from '@/components/ui/calendar';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { 
-  Award, 
-  Clock, 
-  Globe, 
-  GraduationCap, 
-  MessageSquare, 
+import { useState } from "react";
+import { notFound } from "next/navigation";
+import { format } from "date-fns";
+import { psychologists } from "@/data/psychologists";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "@/components/ui/calendar";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Award,
+  Clock,
+  Globe,
+  GraduationCap,
+  MessageSquare,
   CheckCircle2,
   BookMarked,
   FileText,
   Users,
   Brain,
   Stethoscope,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface PageProps {
   params: {
     id: string;
-  }
+  };
 }
 
 const mockProfessionalData = {
   specializations: [
     {
       area: "Anxiety Disorders",
-      description: "Specialized treatment for various anxiety disorders including GAD, panic disorder, and social anxiety.",
+      description:
+        "Specialized treatment for various anxiety disorders including GAD, panic disorder, and social anxiety.",
       experience: "8+ years",
-      approaches: ["CBT", "Exposure Therapy", "Mindfulness-Based Therapy"]
+      approaches: ["CBT", "Exposure Therapy", "Mindfulness-Based Therapy"],
     },
     {
       area: "Depression Management",
-      description: "Evidence-based treatment for major depressive disorder and persistent depressive disorder.",
+      description:
+        "Evidence-based treatment for major depressive disorder and persistent depressive disorder.",
       experience: "10+ years",
-      approaches: ["Interpersonal Therapy", "Behavioral Activation", "CBT"]
+      approaches: ["Interpersonal Therapy", "Behavioral Activation", "CBT"],
     },
     {
       area: "Trauma Recovery",
       description: "Trauma-informed care for PTSD and complex trauma.",
       experience: "6+ years",
-      approaches: ["EMDR", "Trauma-Focused CBT", "Somatic Experiencing"]
-    }
+      approaches: ["EMDR", "Trauma-Focused CBT", "Somatic Experiencing"],
+    },
   ],
   approaches: [
     {
       name: "Cognitive Behavioral Therapy (CBT)",
-      description: "A structured approach focusing on identifying and changing negative thought patterns and behaviors.",
+      description:
+        "A structured approach focusing on identifying and changing negative thought patterns and behaviors.",
       suitable_for: ["Anxiety", "Depression", "Stress Management", "Phobias"],
-      certification_year: 2015
+      certification_year: 2015,
     },
     {
       name: "Mindfulness-Based Cognitive Therapy (MBCT)",
-      description: "Combines traditional CBT methods with mindfulness strategies to help prevent depression relapse.",
+      description:
+        "Combines traditional CBT methods with mindfulness strategies to help prevent depression relapse.",
       suitable_for: ["Depression", "Anxiety", "Stress"],
-      certification_year: 2017
+      certification_year: 2017,
     },
     {
       name: "Eye Movement Desensitization and Reprocessing (EMDR)",
-      description: "A psychotherapy treatment designed to alleviate the distress associated with traumatic memories.",
+      description:
+        "A psychotherapy treatment designed to alleviate the distress associated with traumatic memories.",
       suitable_for: ["PTSD", "Trauma", "Anxiety"],
-      certification_year: 2019
+      certification_year: 2019,
     },
     {
       name: "Dialectical Behavior Therapy (DBT)",
-      description: "A comprehensive cognitive-behavioral treatment for complex mental disorders.",
-      suitable_for: ["Borderline Personality Disorder", "Self-harm", "Emotional Regulation"],
-      certification_year: 2018
-    }
+      description:
+        "A comprehensive cognitive-behavioral treatment for complex mental disorders.",
+      suitable_for: [
+        "Borderline Personality Disorder",
+        "Self-harm",
+        "Emotional Regulation",
+      ],
+      certification_year: 2018,
+    },
   ],
   education: [
     {
       degree: "Ph.D. in Clinical Psychology",
       institution: "Stanford University",
       year: "2015",
-      thesis: "The Role of Mindfulness in Anxiety Treatment: A Longitudinal Study",
-      honors: ["Summa Cum Laude", "Outstanding Research Award"]
+      thesis:
+        "The Role of Mindfulness in Anxiety Treatment: A Longitudinal Study",
+      honors: ["Summa Cum Laude", "Outstanding Research Award"],
     },
     {
       degree: "M.S. in Psychology",
       institution: "University of California, Berkeley",
       year: "2012",
       specialization: "Cognitive and Behavioral Psychology",
-      honors: ["Dean's List"]
+      honors: ["Dean's List"],
     },
     {
       degree: "B.A. in Psychology",
       institution: "Yale University",
       year: "2010",
       minor: "Neuroscience",
-      honors: ["Phi Beta Kappa"]
-    }
+      honors: ["Phi Beta Kappa"],
+    },
   ],
   certifications: [
     {
@@ -107,104 +118,126 @@ const mockProfessionalData = {
       organization: "American Board of Professional Psychology",
       year: "2016",
       expires: "2026",
-      license_number: "PSY12345"
+      license_number: "PSY12345",
     },
     {
       name: "Certified EMDR Therapist",
       organization: "EMDR International Association",
       year: "2019",
       expires: "2025",
-      certification_number: "EMDR98765"
+      certification_number: "EMDR98765",
     },
     {
       name: "Certified DBT Therapist",
       organization: "DBT-Linehan Board of Certification",
       year: "2018",
       expires: "2024",
-      certification_number: "DBT45678"
-    }
+      certification_number: "DBT45678",
+    },
   ],
   publications: [
     {
-      title: "The Impact of Mindfulness-Based Interventions on Anxiety Disorders: A Meta-Analysis",
+      title:
+        "The Impact of Mindfulness-Based Interventions on Anxiety Disorders: A Meta-Analysis",
       journal: "Journal of Clinical Psychology",
       year: 2020,
       doi: "10.1000/jcp.2020.12345",
-      citation_count: 156
+      citation_count: 156,
     },
     {
       title: "Integrating Technology in CBT: A Systematic Review",
       journal: "Cognitive Therapy and Research",
       year: 2019,
       doi: "10.1000/ctr.2019.67890",
-      citation_count: 89
+      citation_count: 89,
     },
     {
       title: "Long-term Outcomes of EMDR in PTSD Treatment",
       journal: "Journal of Traumatic Stress",
       year: 2018,
       doi: "10.1000/jts.2018.13579",
-      citation_count: 234
-    }
+      citation_count: 234,
+    },
   ],
   research_interests: [
     "Digital Mental Health Interventions",
     "Trauma-Informed Care",
     "Mindfulness-Based Therapies",
     "Anxiety Disorders",
-    "Depression Treatment Outcomes"
-  ]
+    "Depression Treatment Outcomes",
+  ],
 };
 
 export default function PsychologistDetailPage({ params }: PageProps) {
-  const psychologist = psychologists.find(p => p.id === params.id);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  
+  const psychologist = psychologists.find((p) => p.id === params.id);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
+
   if (!psychologist) {
     notFound();
   }
 
-  const availableTimeSlots = selectedDate 
-    ? psychologist.availability[format(selectedDate, 'EEEE').toLowerCase()]?.slots || []
+  const availableTimeSlots = selectedDate
+    ? psychologist.availability[format(selectedDate, "EEEE").toLowerCase()]
+        ?.slots || []
     : [];
 
   return (
-    <div className="container py-8 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="container px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="space-y-8 lg:col-span-2">
           {/* Profile Header */}
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row items-start gap-6">
-              <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
-                <AvatarImage src={psychologist.avatar} alt={psychologist.name} />
-                <AvatarFallback>{psychologist.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            <div className="flex flex-col items-start gap-6 sm:flex-row">
+              <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
+                <AvatarImage
+                  src={psychologist.avatar}
+                  alt={psychologist.name}
+                />
+                <AvatarFallback>
+                  {psychologist.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0 space-y-4">
+              <div className="min-w-0 flex-1 space-y-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold truncate">{psychologist.name}</h1>
-                  <p className="text-lg sm:text-xl text-muted-foreground">{psychologist.title}</p>
+                  <h1 className="truncate text-2xl font-bold sm:text-3xl">
+                    {psychologist.name}
+                  </h1>
+                  <p className="text-lg text-muted-foreground sm:text-xl">
+                    {psychologist.title}
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {psychologist.expertise.map((skill) => (
-                    <Badge key={skill} variant="secondary">{skill}</Badge>
+                    <Badge key={skill} variant="secondary">
+                      {skill}
+                    </Badge>
                   ))}
                 </div>
               </div>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-muted-foreground text-sm sm:text-base">
+
+            <div className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:gap-6 sm:text-base">
               <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 flex-shrink-0" />
+                <GraduationCap className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{psychologist.education}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">{psychologist.yearsOfExperience} Years Experience</span>
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {psychologist.yearsOfExperience} Years Experience
+                </span>
               </div>
               <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">{psychologist.languages.join(', ')}</span>
+                <Globe className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {psychologist.languages.join(", ")}
+                </span>
               </div>
             </div>
           </div>
@@ -215,10 +248,16 @@ export default function PsychologistDetailPage({ params }: PageProps) {
               <div className="flex w-max p-1">
                 <TabsList>
                   <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="specializations">Specializations</TabsTrigger>
-                  <TabsTrigger value="approaches">Therapeutic Approaches</TabsTrigger>
+                  <TabsTrigger value="specializations">
+                    Specializations
+                  </TabsTrigger>
+                  <TabsTrigger value="approaches">
+                    Therapeutic Approaches
+                  </TabsTrigger>
                   <TabsTrigger value="education">Education</TabsTrigger>
-                  <TabsTrigger value="certifications">Certifications</TabsTrigger>
+                  <TabsTrigger value="certifications">
+                    Certifications
+                  </TabsTrigger>
                   <TabsTrigger value="publications">Publications</TabsTrigger>
                 </TabsList>
               </div>
@@ -231,7 +270,9 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                   <CardTitle>About</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{psychologist.shortBio}</p>
+                  <p className="text-muted-foreground">
+                    {psychologist.shortBio}
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -241,19 +282,21 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <Brain className="w-5 h-5 text-primary" />
+                      <Brain className="h-5 w-5 text-primary" />
                       <CardTitle>{spec.area}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground">{spec.description}</p>
                     <div className="flex items-center gap-2 text-sm">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="h-4 w-4" />
                       <span>{spec.experience}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {spec.approaches.map((approach, idx) => (
-                        <Badge key={idx} variant="outline">{approach}</Badge>
+                        <Badge key={idx} variant="outline">
+                          {approach}
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -266,25 +309,29 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <Stethoscope className="w-5 h-5 text-primary" />
+                      <Stethoscope className="h-5 w-5 text-primary" />
                       <CardTitle>{approach.name}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <p className="text-muted-foreground">{approach.description}</p>
+                    <p className="text-muted-foreground">
+                      {approach.description}
+                    </p>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4" />
+                        <Users className="h-4 w-4" />
                         <span className="font-medium">Suitable for:</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {approach.suitable_for.map((condition, idx) => (
-                          <Badge key={idx} variant="secondary">{condition}</Badge>
+                          <Badge key={idx} variant="secondary">
+                            {condition}
+                          </Badge>
                         ))}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="h-4 w-4" />
                       <span>Certified since {approach.certification_year}</span>
                     </div>
                   </CardContent>
@@ -297,15 +344,17 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5 text-primary" />
+                      <GraduationCap className="h-5 w-5 text-primary" />
                       <CardTitle>{edu.degree}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <p className="font-medium">{edu.institution}</p>
-                        <p className="text-muted-foreground">Class of {edu.year}</p>
+                        <p className="text-muted-foreground">
+                          Class of {edu.year}
+                        </p>
                       </div>
                       {edu.thesis && (
                         <div>
@@ -316,7 +365,9 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {edu.honors.map((honor, idx) => (
-                        <Badge key={idx} variant="outline">{honor}</Badge>
+                        <Badge key={idx} variant="outline">
+                          {honor}
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -329,19 +380,24 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <Award className="w-5 h-5 text-primary" />
+                      <Award className="h-5 w-5 text-primary" />
                       <CardTitle>{cert.name}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <p className="font-medium">{cert.organization}</p>
-                        <p className="text-muted-foreground">License #{cert.license_number || cert.certification_number}</p>
+                        <p className="text-muted-foreground">
+                          License #
+                          {cert.license_number || cert.certification_number}
+                        </p>
                       </div>
                       <div>
                         <p className="font-medium">Valid Period</p>
-                        <p className="text-muted-foreground">{cert.year} - {cert.expires}</p>
+                        <p className="text-muted-foreground">
+                          {cert.year} - {cert.expires}
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -354,25 +410,33 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <Card key={index}>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <BookMarked className="w-5 h-5 text-primary" />
+                      <BookMarked className="h-5 w-5 text-primary" />
                       <CardTitle>{pub.title}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <p className="font-medium">{pub.journal}</p>
-                        <p className="text-muted-foreground">Published in {pub.year}</p>
+                        <p className="text-muted-foreground">
+                          Published in {pub.year}
+                        </p>
                       </div>
                       <div>
                         <p className="font-medium">Impact</p>
-                        <p className="text-muted-foreground">{pub.citation_count} citations</p>
+                        <p className="text-muted-foreground">
+                          {pub.citation_count} citations
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <FileText className="w-4 h-4" />
-                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" 
-                         className="text-primary hover:underline">
+                      <FileText className="h-4 w-4" />
+                      <a
+                        href={`https://doi.org/${pub.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
                         DOI: {pub.doi}
                       </a>
                     </div>
@@ -392,7 +456,8 @@ export default function PsychologistDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {psychologist.consultationFee.currency} {psychologist.consultationFee.amount}
+                {psychologist.consultationFee.currency}{" "}
+                {psychologist.consultationFee.amount}
               </div>
               <p className="text-muted-foreground">
                 {psychologist.consultationFee.duration} minutes session
@@ -410,7 +475,7 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 mode="single"
                 selected={selectedDate}
                 onSelect={setSelectedDate}
-                className="rounded-md border w-full"
+                className="w-full rounded-md border"
               />
 
               <div className="space-y-2">
@@ -418,11 +483,7 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 <ScrollArea className="h-[120px]">
                   <div className="grid grid-cols-2 gap-2">
                     {availableTimeSlots.map((slot, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="w-full"
-                      >
+                      <Button key={index} variant="outline" className="w-full">
                         {slot.start}
                       </Button>
                     ))}
@@ -430,9 +491,7 @@ export default function PsychologistDetailPage({ params }: PageProps) {
                 </ScrollArea>
               </div>
 
-              <Button className="w-full">
-                Schedule Consultation
-              </Button>
+              <Button className="w-full">Schedule Consultation</Button>
             </CardContent>
           </Card>
 
@@ -443,7 +502,7 @@ export default function PsychologistDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <Button variant="outline" className="w-full">
-                <MessageSquare className="w-4 h-4 mr-2" />
+                <MessageSquare className="mr-2 h-4 w-4" />
                 Send Message
               </Button>
             </CardContent>

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,6 +16,16 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
+// const amiriQuran = localFont({
+//   src: "../fonts/AmiriQuran-Regular.ttf",
+//   variable: "--font-amiri-quran",
+// });
+
+// const arabicTransliteration = localFont({
+//   src: "../fonts/arabic-transliteration.ttf",
+//   variable: "--font-arabic-transliteration",
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,9 +40,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.className} ${geistSans.variable} ${geistMono.variable} $ antialiased`}
       >
-        {children}
+        <NuqsAdapter>{children}</NuqsAdapter>
       </body>
     </html>
   );

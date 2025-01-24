@@ -1,23 +1,26 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { categories, psychologists, Category } from '@/data/psychologists';
-import { PsychologistCard } from '@/components/psychologists/psychologist-card';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { categories, psychologists, Category } from "@/data/psychologists";
+import { PsychologistCard } from "@/components/psychologists/psychologist-card";
+import { Button } from "@/components/ui/button";
 
 export default function MentalHealthPage() {
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
 
   const filteredPsychologists = selectedCategory
     ? psychologists.filter((p) => p.expertise.includes(selectedCategory))
     : psychologists;
 
   return (
-    <section className="container px-4 py-16 space-y-8">
+    <section className="container space-y-8 px-4 py-16">
       <div>
-        <h2 className="text-3xl font-bold mb-2">Mental Health Support</h2>
+        <h2 className="mb-2 text-3xl font-bold">Mental Health Support</h2>
         <p className="text-muted-foreground">
-          Connect with psychology experts and find support for your mental well-being
+          Connect with psychology experts and find support for your mental
+          well-being
         </p>
       </div>
 
@@ -45,7 +48,7 @@ export default function MentalHealthPage() {
 
       {/* Psychologists Grid */}
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredPsychologists.map((psychologist) => (
             <PsychologistCard
               key={psychologist.id}
