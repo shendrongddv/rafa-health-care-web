@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
 import Logo from "../../public/images/logo-horizontal.png"
+import { UserButton } from "@/components/user-button";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     return ( 
@@ -36,6 +37,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
                     {/* USER NAV */}
                     <UserNav />
+                    <UserButton/>
 
                 </div>
 
