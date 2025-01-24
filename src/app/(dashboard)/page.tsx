@@ -43,7 +43,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold mb-2 flex items-center">
             {greetingIcon}
-            {greeting}, Rafa!
+            {greeting}!
           </h1>
           <p className="text-muted-foreground">
             Welcome to your personal health and study dashboard. Here you can access tools for relaxation, exercise, and

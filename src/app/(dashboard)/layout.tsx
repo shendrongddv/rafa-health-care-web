@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { MainNav } from "./_components/main-nav";
-import { UserNav } from "./_components/user.nav";
 import { Search } from "./_components/search";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
 import Logo from "../../public/images/logo-horizontal.png"
-import { UserButton } from "@/components/user-button";
+import { UserButton } from "../(auth)/_components/user-button";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     return ( 
@@ -36,7 +35,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                     <Separator orientation="vertical" className="h-8 hidden md:flex" />
 
                     {/* USER NAV */}
-                    <UserNav />
                     <UserButton/>
 
                 </div>

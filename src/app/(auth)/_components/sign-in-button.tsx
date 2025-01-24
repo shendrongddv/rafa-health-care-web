@@ -41,7 +41,7 @@ export function GoogleButton() {
 
 export function SocialButton() {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid gap-4">
       <form
         action={async () => {
           "use server";
@@ -49,7 +49,7 @@ export function SocialButton() {
         }}
       >
         <Button type="submit" variant="outline" className="w-full">
-          <Github className="mr-2 size-4" />
+          <Github className="mr-0.5 size-4" />
           Github
         </Button>
       </form>
